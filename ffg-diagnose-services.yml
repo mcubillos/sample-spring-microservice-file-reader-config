@@ -1,0 +1,312 @@
+# ===================================================================
+# COMMON SPRING BOOT PROPERTIES
+# Please refer to 
+# https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+# http://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-yaml               
+# ===================================================================
+
+### Four profiles:
+# - localhost
+
+# ===================================================================
+# DEFAULT CONFIGURATION
+# ===================================================================
+
+### DATAACCESS CONFIGURATION ###
+dataaccess:
+  baseUrl: http://strl099046:9999/commonarch/dataaccess-service/api/
+  #baseUrl: http://localhost:9999/dataaccess-service/api/
+
+### USER MANAGEMENT CONFIGURATION ###
+user:
+   appName: ffg-diagnose-services_DEV
+   appSector: Advisory
+   appLoc: SH
+   #appToken: b4e3e3d8ef719c1af0a39901837947cd
+   appToken: de08a0e6d4c5b9fee8147a791c22dadf
+   baseUrl: http://strl099023:9040/usermgmt/api/user/
+   #baseUrl: http://localhost:9999/usermanagement-service/api/user/
+
+### OAUTH2 CONFIGURATION###
+oauth2:
+  accessTokenUri: http://strl099046:9999/commonarch/uaa/oauth/token
+#  accessTokenUri: http://127.0.0.1:9999/uaa/oauth/token
+  common:
+    clientId: common-service
+#    clientSecret: 0940f4890ca1343cq1j07
+    clientSecret: '{encrypt_delux}9b32615cb7b9b4b970267eff137fa9be741d249bd900b2d9345c1dc6330e6a67524b4098c83b6a87f5882c5fffa7259f951f0da7c2'
+    scope: operation
+  dataaccess:
+    clientId: s_l
+#    clientSecret: 0940f4890ca1343cq1j07
+    clientSecret: '{encrypt_delux}9b32615cb7b9b4b970267eff137fa9be741d249bd900b2d9345c1dc6330e6a67524b4098c83b6a87f5882c5fffa7259f951f0da7c2'
+    scope: read
+
+### SPRING CONFIGURATION ###
+spring:
+   profiles:
+      active: localhost
+
+   application:
+      name: ffg-diagnose-services
+
+   messages:
+      basename: i18n/messages
+      fallback-to-system-locale: true
+
+   jpa:
+    hibernate:
+      naming:
+        strategy: org.hibernate.cfg.EJB3NamingStrategy
+        
+   http:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
+    
+fileStorage:
+  location: FileStorage
+
+security:
+   basic:
+      enabled: false
+
+###  MVC view resolution for groovy
+groovy.template.enabled: false
+  
+#enable sendemail
+sendemail: true #true #false
+
+#need to run usermanagement
+feign:
+  hystrix:
+    enabled: false
+
+
+server:
+   contextPath: /services/api
+   compression:
+      enabled: true # If response compression is enabled.
+      mime-types: text/html,text/css,application/json
+      min-response-size: 2048
+
+### LOGGING CONFIGURATION ###
+logging:
+   config: classpath:logback.xml
+
+   level:
+      root: INFO
+      org.springframework.web: WARN
+      org.springframework.jdbc: debug
+      com.pwc: DEBUG
+      com.pwc.advisory.analytic.dao.monitor.DaoMonitor: DEBUG
+      com.pwc.advisory.analytic.service.monitor.ServiceMonitor: DEBUG
+
+spring.output.ansi.enabled: DETECT
+
+### APPLICATION CONFIGURATION ###
+application:
+  sessionTimeout: 20
+  nonsecure:
+    urls: /,/index.html,/swagger-ui.html,/swagger-resources,/configuration,/images,/webjars,/v2/api-docs,/auth,/url-containers/**,/tools/**,/audit,/files/**,/project/**,/basic-categories/**,/categories/**,/category-levels/**,/category-colors/**
+  nonsession:
+    urls: /, /index.html,/swagger-ui.html,/swagger-resources,/configuration,/images,/webjars,/v2/api-docs,/auth,/url-containers/**,/tools/**,/audit,/files/**,/project/**,/basic-categories/**,/categories/**,/category-levels/**,/category-colors/**
+
+jwt:
+  header: Authorization
+  secret: mySecret
+  expiration: 604800
+  route:
+    authentication:
+      path: auth
+      refresh: restore
+
+### EMAIL CONFIGURATION ###
+email:
+#  notificationLink: https://analyticapps.us.hosting.pwc.com/pwc-notification/api/notification/sendTextMail
+#  notificationLink: http://strl099023:9060/pwc-notification/api/notification/sendTextMail
+#  notificationLink: http://strl099046:8085/pwc-notification/api/notification/sendTextMail
+  notificationLink: http://strl099046:9999/commonarch/pwc-notification/api/notification/sendTextMail
+  appName: ffg-diagnose-services
+  plainCreds: ffg-diagnose-services:ffg-diagnose-services
+  appLink: https://analyticapps.us.hosting.pwc.com/ffg-diagnose-services-dev/
+  resetPwdUrl: https://analyticapps.us.hosting.pwc.com
+
+
+#dataaccess:
+#  appName: ffg-diagnose-services
+
+### SWAGGER CONFIGURATION ###
+swagger:
+  basePackage: com.pwc.analyticapps.platform.ffg-diagnose-services.web.controller
+  infoTitle: ffg-diagnose-services Back-end API
+  infoDescription: ffg-diagnose-services related service API calls
+  infoVersion: 1.0.0
+  infoTermsOfServiceUrl: Terms of service
+  infoLicense: License of API
+  infoLicenseUrl: API license URL
+# ===================================================================
+# LOCALHOST CONFIGURATION
+# ===================================================================
+---
+spring:
+  profiles: localhost
+
+  datasource:
+     username: FFGDiagnoseReadWrite
+     password: 'FFGDiagnose2018!@#$'
+     url: jdbc:sqlserver://STRW099039.mso.net;databaseName=FFGDiagnose
+     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+  jpa:
+    hibernate.ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate.format_sql: false
+      use_sql_comments: true
+
+
+  data:
+    rest:
+      default-media-type: application/json
+    mongodb:
+      database: ffgdiagnose
+      host: strl099155
+      port: 27018
+      username: ffgdiagnose
+      password: 'ffgdiagnose@123456'
+      repositories.enabled: true
+#    mongodb:
+#      database: ffg
+#      host: localhost
+#      port: 27018
+#      repositories.enabled: true
+
+
+### USER MANAGEMENT CONFIGURATION ###
+user:
+   appName: ffg-diagnose-services_DEV
+   appSector: Advisory
+   appLoc: SH
+   #appToken: b4e3e3d8ef719c1af0a39901837947cd
+   
+   appToken: de08a0e6d4c5b9fee8147a791c22dadf
+   baseUrl: http://localhost:9999/usermanagement-service/api/user/
+
+### FILE CONFIGURATION ###
+file:
+  basedir: /data/ffg-diagnose-services-data
+
+### EMAIL CONFIGURATION ###
+email:
+  notificationLink: http://localhost:9999/commonarch/pwc-notification/api/notification/sendTextMail
+  
+### websocket ###
+websocket:
+  endpoint: http://strl099046:9999/commonarch/notification-service/
+#   endpoint: http://strl099020.mso.net:8083/common-notification/
+
+# ===================================================================
+# TEST CONFIGURATION
+# ===================================================================
+---
+spring:
+  profiles: test
+
+  datasource:
+     username: FFGDiagnoseReadWrite
+     password: 'FFGDiagnose2018!@#$'
+     url: jdbc:sqlserver://STRW099039.mso.net;databaseName=FFGDiagnose
+     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+  jpa:
+    hibernate.ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate.format_sql: false
+      use_sql_comments: true
+
+
+  data:
+    rest:
+        default-media-type: application/json
+    mongodb:
+      database: ffgdiagnose
+      host: strl099155
+      port: 27018
+      username: ffgdiagnose
+      password: 'ffgdiagnose@123456'
+      repositories.enabled: true
+
+
+# ===================================================================
+# QA CONFIGURATION
+# ===================================================================
+---
+
+spring:
+  profiles: qa
+
+  datasource:
+     username: FFGDiagnoseReadWrite
+     password: 'FFGDiagnose2018!@#$'
+     url: jdbc:sqlserver://STRW099039.mso.net;databaseName=FFGDiagnoseQA
+     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+  jpa:
+    hibernate.ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate.format_sql: false
+      use_sql_comments: true
+
+
+  data:
+    rest:
+        default-media-type: application/json
+    mongodb:
+      database: FFGDiagnose
+      host: strl099151
+      port: 27017
+      username: FFGDiagnose
+      password: 'FFGDiagnoseQA@123456'
+      repositories.enabled: true
+
+# ===================================================================
+# UAT CONFIGURATION
+# ===================================================================
+---
+
+spring:
+  profiles: uat
+
+  #datasource:
+  #   username: FFGDiagnoseReadWrite
+  #   password: 'FFGDiagnoseUAT2018!@#$'
+  #   url: jdbc:sqlserver://STRW099061.mso.net;databaseName=FFGDiagnose
+  #   driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver 
+  datasource:
+     username: FFGDiagnoseReadWrite
+     password: 'FFGDiagnose2018!@#$'
+     url: jdbc:sqlserver://STRW099039.mso.net;databaseName=FFGDiagnoseQA
+     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+     
+  jpa:
+    hibernate.ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate.format_sql: false
+      use_sql_comments: true
+
+
+  data:
+    rest:
+        default-media-type: application/json
+    mongodb:
+      database: FFGDiagnose
+      host: strl099151
+      port: 27017
+      username: FFGDiagnose
+      password: 'FFGDiagnoseQA@123456'
+      repositories.enabled: true
+
